@@ -22,13 +22,13 @@ literally.
 Add to `pyproject.toml` / `requirements.txt`:
 
 ```
-rexbrown-observability @ git+https://github.com/grokbot-shrike/rexbrown-observability@v0.1.1
+rexbrown-observability @ git+https://github.com/grokbot-shrike/rexbrown-observability@v0.1.2
 ```
 
 With extras (FastAPI apps want both):
 
 ```
-rexbrown-observability[fastapi,sentry] @ git+https://github.com/grokbot-shrike/rexbrown-observability@v0.1.1
+rexbrown-observability[fastapi,sentry] @ git+https://github.com/grokbot-shrike/rexbrown-observability@v0.1.2
 ```
 
 | Extra     | Adds            | When                                        |
@@ -51,7 +51,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends git \
 or, simpler, use the tarball URL which needs no git:
 
 ```
-rexbrown-observability[fastapi,sentry] @ https://github.com/grokbot-shrike/rexbrown-observability/archive/refs/tags/v0.1.1.tar.gz
+rexbrown-observability[fastapi,sentry] @ https://github.com/grokbot-shrike/rexbrown-observability/archive/refs/tags/v0.1.2.tar.gz
 ```
 
 ## Integration: three lines
@@ -194,3 +194,7 @@ python -m venv .venv && . .venv/bin/activate
 pip install -e '.[dev,fastapi,sentry]'
 pytest
 ```
+
+## Access log
+
+The middleware logs one structured `request` line per request (method, path, status, duration_ms, request_id) and skips health paths, so uvicorn's own access log is set to WARNING. Set `UVICORN_ACCESS_LOG=1` to bring it back.
