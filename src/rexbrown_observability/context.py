@@ -59,3 +59,9 @@ def outgoing_headers(headers: MutableMapping[str, Any] | None = None) -> dict[st
 def httpx_event_hook(request: Any) -> None:
     """httpx request event hook: ``httpx.Client(event_hooks={"request": [httpx_event_hook]})``."""
     inject_request_id(request.headers)
+
+
+async def async_httpx_event_hook(request: Any) -> None:
+    """Async variant for ``httpx.AsyncClient`` (which awaits its hooks):
+    ``httpx.AsyncClient(event_hooks={"request": [async_httpx_event_hook]})``."""
+    inject_request_id(request.headers)
