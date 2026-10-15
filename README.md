@@ -22,13 +22,13 @@ literally.
 Add to `pyproject.toml` / `requirements.txt`:
 
 ```
-rexbrown-observability @ git+https://github.com/grokbot-shrike/rexbrown-observability@v0.1.0
+rexbrown-observability @ git+https://github.com/grokbot-shrike/rexbrown-observability@v0.1.1
 ```
 
 With extras (FastAPI apps want both):
 
 ```
-rexbrown-observability[fastapi,sentry] @ git+https://github.com/grokbot-shrike/rexbrown-observability@v0.1.0
+rexbrown-observability[fastapi,sentry] @ git+https://github.com/grokbot-shrike/rexbrown-observability@v0.1.1
 ```
 
 | Extra     | Adds            | When                                        |
@@ -51,7 +51,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends git \
 or, simpler, use the tarball URL which needs no git:
 
 ```
-rexbrown-observability[fastapi,sentry] @ https://github.com/grokbot-shrike/rexbrown-observability/archive/refs/tags/v0.1.0.tar.gz
+rexbrown-observability[fastapi,sentry] @ https://github.com/grokbot-shrike/rexbrown-observability/archive/refs/tags/v0.1.1.tar.gz
 ```
 
 ## Integration: three lines
@@ -131,12 +131,13 @@ envelope.
 ## Request ID helpers
 
 ```python
-from rexbrown_observability import get_request_id, outgoing_headers, inject_request_id, httpx_event_hook
+from rexbrown_observability import get_request_id, outgoing_headers, inject_request_id, httpx_event_hook, async_httpx_event_hook
 
 get_request_id()                         # current id or None
 requests.get(url, headers=outgoing_headers({"Accept": "application/json"}))
 inject_request_id(session.headers)       # mutate an existing headers mapping in place
 httpx.Client(event_hooks={"request": [httpx_event_hook]})   # automatic for httpx
+httpx.AsyncClient(event_hooks={"request": [async_httpx_event_hook]})  # AsyncClient awaits hooks: use the async one
 ```
 
 Uvicorn, `uvicorn.error`, `uvicorn.access`, `huey` and `fastapi` loggers have their own

@@ -19,6 +19,7 @@ from .context import (
     REQUEST_ID_HEADER,
     get_request_id,
     httpx_event_hook,
+    async_httpx_event_hook,
     inject_request_id,
     outgoing_headers,
     request_id_var,
@@ -30,7 +31,7 @@ from .redaction import REDACTED, mask_emails, redact_fields
 from .sentry import init_sentry
 from .sentry import is_active as sentry_is_active
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __all__ = [
     "setup",
@@ -40,6 +41,7 @@ __all__ = [
     "outgoing_headers",
     "inject_request_id",
     "httpx_event_hook",
+    "async_httpx_event_hook",
     "JsonFormatter",
     "TextFormatter",
     "redact_fields",
