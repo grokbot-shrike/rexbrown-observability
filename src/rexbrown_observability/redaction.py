@@ -16,10 +16,13 @@ SENSITIVE_SUBSTRINGS: tuple[str, ...] = (
     "api_key",
     "apikey",
     "cookie",
-    "dsn",
     "email",
-    "pin",
 )
+
+# Short names matched only as whole snake/kebab-case segments, so that
+# e.g. ``shipping_id`` or ``mapping`` are not redacted but ``pin``/``user_pin``
+# and ``sentry_dsn`` are.
+SENSITIVE_SEGMENTS: frozenset[str] = frozenset({"pin", "dsn"})
 
 EMAIL_RE = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
 
@@ -29,7 +32,9 @@ def is_sensitive_key(key: Any) -> bool:
     if not isinstance(key, str):
         return False
     lowered = key.lower()
-    return any(s in lowered for s in SENSITIVE_SUBSTRINGS)
+    if any(s in lowered for s in SENSITIVE_SUBSTRINGS):
+        return True
+    return any(seg in SENSITIVE_SEGMENTS for seg in re.split(r"[_\-.]", lowered))
 
 
 def redact_value(value: Any) -> Any:
