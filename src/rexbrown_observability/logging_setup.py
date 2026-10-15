@@ -28,6 +28,7 @@ _STANDARD_ATTRS: frozenset[str] = frozenset(
         "module", "exc_info", "exc_text", "stack_info", "lineno", "funcName",
         "created", "msecs", "relativeCreated", "thread", "threadName",
         "processName", "process", "taskName", "message", "asctime",
+        "color_message",  # uvicorn adds an ANSI-coloured copy of msg
     }
 )
 
@@ -147,5 +148,13 @@ def configure_logging(service: str, env: str) -> logging.Handler:
         lg = logging.getLogger(name)
         lg.handlers[:] = []
         lg.propagate = True
+
+    # RequestIDMiddleware already logs one structured "request" line per
+    # request (and skips health probes), so uvicorn's access log is a
+    # duplicate. Silence it unless UVICORN_ACCESS_LOG=1.
+    if os.getenv("UVICORN_ACCESS_LOG", "").lower() not in ("1", "true", "yes"):
+        logging.getLogger("uvicorn.access").setLevel(logging.WARNING)
+    else:
+        logging.getLogger("uvicorn.access").setLevel(logging.NOTSET)
 
     return handler

@@ -31,7 +31,7 @@ from .redaction import REDACTED, mask_emails, redact_fields
 from .sentry import init_sentry
 from .sentry import is_active as sentry_is_active
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 
 __all__ = [
     "setup",

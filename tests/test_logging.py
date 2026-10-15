@@ -123,9 +123,9 @@ def test_uvicorn_and_huey_loggers_propagate_to_root(json_lines):
         lg = logging.getLogger(name)
         assert lg.handlers == []
         assert lg.propagate is True
-    logging.getLogger("uvicorn.access").info("GET /")
+    logging.getLogger("uvicorn.error").info("GET /")
     (rec,) = json_lines()
-    assert rec["logger"] == "uvicorn.access"
+    assert rec["logger"] == "uvicorn.error"
 
 
 def test_idempotent(json_lines):
@@ -161,3 +161,14 @@ def test_text_format(capsys, monkeypatch):
     assert "WARNING x plain line" in out
     assert "order_id=7" in out
     assert "'[REDACTED]'" in out and "'t'" not in out
+
+
+def test_color_message_dropped_and_access_log_quiet(monkeypatch):
+    import io, json, logging
+    from rexbrown_observability.logging_setup import JsonFormatter, configure_logging
+    monkeypatch.delenv("UVICORN_ACCESS_LOG", raising=False)
+    configure_logging(service="t", env="dev")
+    assert logging.getLogger("uvicorn.access").getEffectiveLevel() == logging.WARNING
+    rec = logging.LogRecord("uvicorn.error", logging.INFO, __file__, 1, "hi", None, None)
+    rec.color_message = "\x1b[36mhi\x1b[0m"
+    assert "color_message" not in json.loads(JsonFormatter("t", "dev").format(rec))
